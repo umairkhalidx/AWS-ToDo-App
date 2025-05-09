@@ -5,7 +5,7 @@ import './App.css';
 function App() {
   const [rdsTables, setRdsTables] = useState([]);
   const [s3Files, setS3Files] = useState([]);
-  const [backendUrl, setBackendUrl] = useState('http://15.206.233.210:5000');
+  const [backendUrl, setBackendUrl] = useState('http://3.110.132.241:5000');
 
   const fetchRdsTables = async () => {
     try {
@@ -33,7 +33,7 @@ function App() {
           type="text" 
           value={backendUrl}
           onChange={(e) => setBackendUrl(e.target.value)}
-          placeholder="Backend URL (http://15.206.233.210:5000)"
+          placeholder="Backend URL (http://3.110.132.241:5000)"
         />
       </div>
       <div className="buttons">
