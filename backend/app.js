@@ -23,7 +23,13 @@ const db = mysql.createPool({
   database: process.env.DB_NAME
 });
 
-app.use(cors({ origin: true, credentials: true }));
+// app.use(cors({ origin: true, credentials: true }));
+app.use(cors({
+    origin: 'http://Umair-todo-app-frontend-env.eba-sq2agqm9.ap-south-1.elasticbeanstalk.com', // or your frontend URL
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -54,7 +60,13 @@ app.post('/login', async (req, res) => {
   if (!user || !(await bcrypt.compare(password, user.password)))
     return res.status(401).json({ message: 'Invalid credentials' });
   const token = jwt.sign({ id: user.id, name: user.name, email: user.email }, process.env.JWT_SECRET);
-  res.cookie('token', token, { httpOnly: true }).json({ user: { name: user.name, email: user.email } });
+//   res.cookie('token', token, { httpOnly: true }).json({ user: { name: user.name, email: user.email } });
+  res.cookie('token', token, { 
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    maxAge: 86400000 // 1 day
+  }).json({ user: { name: user.name, email: user.email } });
 });
 
 app.post('/logout', (req, res) => {
