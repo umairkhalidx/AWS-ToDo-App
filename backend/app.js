@@ -26,23 +26,24 @@ const db = mysql.createPool({
 const allowedOrigins = [
   "http://umair-todo-app-frontend-env.eba-sq2agqm9.ap-south-1.elasticbeanstalk.com",
   "https://umair-todo-app-frontend-env.eba-sq2agqm9.ap-south-1.elasticbeanstalk.com",
-  "http://localhost:3000",
-  "http://localhost:5000"
+  "http://13.201.60.165:5000",
+  "http://localhost:3000"
 ];
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  })
-);
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+}));
+
+// Update cookie settings in login/signup responses
+res.cookie('token', token, {
+  httpOnly: true,
+  secure: true, // Must be true in production
+  sameSite: 'none', // Required for cross-site cookies
+  domain: '.eba-sq2agqm9.ap-south-1.elasticbeanstalk.com', // Match your domain
+  maxAge: 86400000 // 1 day
+});
 
 app.options('*', cors());
 app.use(express.json());
