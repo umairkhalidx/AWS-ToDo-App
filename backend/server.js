@@ -5,11 +5,11 @@ const multer = require('multer');
 const AWS = require('aws-sdk');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-// const cors = require('cors');
-app.use(cors({
-  origin: 'http://Umair-todo-app-frontend-env.eba-sq2agqm9.ap-south-1.elasticbeanstalk.com',
-  credentials: true
-}));
+const cors = require('cors');
+// app.use(cors({
+//   origin: 'http://Umair-todo-app-frontend-env.eba-sq2agqm9.ap-south-1.elasticbeanstalk.com',
+//   credentials: true
+// }));
 
 const app = express();
 app.use(express.json());
