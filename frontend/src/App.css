@@ -1,24 +1,43 @@
-.App {
-  text-align: center;
-  padding: 20px;
+/* Tailwind-like base styles */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
 }
-.buttons {
-  margin: 20px 0;
+
+/* Smooth transitions */
+button, input, textarea, a {
+  transition: all 0.2s ease;
 }
-button {
-  margin: 0 10px;
-  padding: 10px 20px;
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
-.results {
-  display: flex;
-  justify-content: center;
-  gap: 50px;
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
 }
-ul {
-  list-style: none;
-  padding: 0;
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
 }
-input {
-  padding: 8px;
-  width: 300px;
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Image preview styling */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 768px) {
+  .grid-cols-1 {
+    grid-template-columns: 1fr;
+  }
 }
