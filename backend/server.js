@@ -118,7 +118,8 @@ app.post('/posts', authenticate, upload.single('image'), async (req, res) => {
         Bucket: process.env.S3_BUCKET_NAME,
         Key: `posts/${Date.now()}_${req.file.originalname}`,
         Body: req.file.buffer,
-        ContentType: req.file.mimetype
+        ContentType: req.file.mimetype,
+        ACL: 'public-read'
       };
       
       const uploadedFile = await s3.upload(params).promise();
@@ -156,7 +157,8 @@ app.put('/posts/:id', authenticate, upload.single('image'), async (req, res) => 
         Bucket: process.env.S3_BUCKET_NAME,
         Key: `posts/${Date.now()}_${req.file.originalname}`,
         Body: req.file.buffer,
-        ContentType: req.file.mimetype
+        ContentType: req.file.mimetype,
+        ACL: 'public-read'
       };
       
       const uploadedFile = await s3.upload(params).promise();
