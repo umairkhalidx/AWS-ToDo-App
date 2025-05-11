@@ -58,7 +58,7 @@ This project showcases a full-stack web application deployed on Amazon Web Servi
   - `S3_BUCKET_NAME`, `JWT_SECRET`, etc.
 - Start server:
   ```bash
-  node index.js
+  pm2 start server.js
   ```
 
 ### 🌐 4. Frontend Deployment (React on Elastic Beanstalk)
@@ -69,7 +69,7 @@ This project showcases a full-stack web application deployed on Amazon Web Servi
   ```bash
   npm run build
   ```
-- Zip `build/` folder and upload via Beanstalk dashboard
+- Zip the folder and upload via Beanstalk dashboard
 
 ### 🔐 5. Required Environment Variables
 - `RDS_HOSTNAME`
@@ -82,5 +82,5 @@ This project showcases a full-stack web application deployed on Amazon Web Servi
 - `JWT_SECRET`
 
 ## 🌍 Live Demo
-- **Frontend:** <your-link>
-- **Backend:** <your-link>
+- **Frontend:** http://umair-todo-app-frontend-env.eba-sq2agqm9.ap-south-1.elasticbeanstalk.com/
+- **Backend:** http://13.201.11.52/
