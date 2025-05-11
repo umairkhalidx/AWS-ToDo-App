@@ -6,10 +6,6 @@ const AWS = require('aws-sdk');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
-// app.use(cors({
-//   origin: 'http://Umair-todo-app-frontend-env.eba-sq2agqm9.ap-south-1.elasticbeanstalk.com',
-//   credentials: true
-// }));
 
 const app = express();
 app.use(express.json());
@@ -108,9 +104,75 @@ app.get('/posts', authenticate, async (req, res) => {
   }
 });
 
+// app.post('/posts', authenticate, upload.single('image'), async (req, res) => {
+//   try {
+//     const { title, content } = req.body;
+//     let imageUrl = null;
+    
+//     if (req.file) {
+//       const params = {
+//         Bucket: process.env.S3_BUCKET_NAME,
+//         Key: `posts/${Date.now()}_${req.file.originalname}`,
+//         Body: req.file.buffer,
+//         ContentType: req.file.mimetype
+//       };
+      
+//       const uploadedFile = await s3.upload(params).promise();
+//       imageUrl = uploadedFile.Location;
+//     }
+    
+//     const [result] = await pool.query(
+//       'INSERT INTO posts (title, content, image_url, user_id) VALUES (?, ?, ?, ?)',
+//       [title, content, imageUrl, req.user.id]
+//     );
+    
+//     res.status(201).json({ 
+//       id: result.insertId, 
+//       title, 
+//       content, 
+//       image_url: imageUrl 
+//     });
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// });
+
+// app.put('/posts/:id', authenticate, upload.single('image'), async (req, res) => {
+//   try {
+//     const { title, content } = req.body;
+//     const postId = req.params.id;
+//     let imageUrl = null;
+    
+//     // Check if post belongs to user
+//     const [posts] = await pool.query('SELECT * FROM posts WHERE id = ? AND user_id = ?', [postId, req.user.id]);
+//     if (!posts.length) return res.status(404).json({ error: 'Post not found' });
+    
+//     if (req.file) {
+//       const params = {
+//         Bucket: process.env.S3_BUCKET_NAME,
+//         Key: `posts/${Date.now()}_${req.file.originalname}`,
+//         Body: req.file.buffer,
+//         ContentType: req.file.mimetype
+//       };
+      
+//       const uploadedFile = await s3.upload(params).promise();
+//       imageUrl = uploadedFile.Location;
+//     }
+    
+//     await pool.query(
+//       'UPDATE posts SET title = ?, content = ?, image_url = COALESCE(?, image_url) WHERE id = ?',
+//       [title, content, imageUrl, postId]
+//     );
+    
+//     res.json({ id: postId, title, content, image_url: imageUrl || posts[0].image_url });
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// });
+
 app.post('/posts', authenticate, upload.single('image'), async (req, res) => {
   try {
-    const { title, content } = req.body;
+    const { title, content, originalFilename } = req.body; // Add originalFilename
     let imageUrl = null;
     
     if (req.file) {
@@ -126,15 +188,16 @@ app.post('/posts', authenticate, upload.single('image'), async (req, res) => {
     }
     
     const [result] = await pool.query(
-      'INSERT INTO posts (title, content, image_url, user_id) VALUES (?, ?, ?, ?)',
-      [title, content, imageUrl, req.user.id]
+      'INSERT INTO posts (title, content, image_url, original_filename, user_id) VALUES (?, ?, ?, ?, ?)',
+      [title, content, imageUrl, req.file?.originalname || originalFilename, req.user.id]
     );
     
     res.status(201).json({ 
       id: result.insertId, 
       title, 
       content, 
-      image_url: imageUrl 
+      image_url: imageUrl,
+      original_filename: req.file?.originalname || originalFilename
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -143,7 +206,7 @@ app.post('/posts', authenticate, upload.single('image'), async (req, res) => {
 
 app.put('/posts/:id', authenticate, upload.single('image'), async (req, res) => {
   try {
-    const { title, content } = req.body;
+    const { title, content, originalFilename } = req.body; // Add originalFilename
     const postId = req.params.id;
     let imageUrl = null;
     
@@ -164,11 +227,17 @@ app.put('/posts/:id', authenticate, upload.single('image'), async (req, res) => 
     }
     
     await pool.query(
-      'UPDATE posts SET title = ?, content = ?, image_url = COALESCE(?, image_url) WHERE id = ?',
-      [title, content, imageUrl, postId]
+      'UPDATE posts SET title = ?, content = ?, image_url = COALESCE(?, image_url), original_filename = COALESCE(?, original_filename) WHERE id = ?',
+      [title, content, imageUrl, req.file?.originalname || originalFilename, postId]
     );
     
-    res.json({ id: postId, title, content, image_url: imageUrl || posts[0].image_url });
+    res.json({ 
+      id: postId, 
+      title, 
+      content, 
+      image_url: imageUrl || posts[0].image_url,
+      original_filename: req.file?.originalname || originalFilename || posts[0].original_filename
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
